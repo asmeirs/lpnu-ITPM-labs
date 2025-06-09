@@ -38,7 +38,7 @@ usermod -aG docker ubuntu
 
 TARGET_DIR=/home/ubuntu/calc-visualizer
 REPO_URL=https://github.com/asmeirs/lpnu-ITPM-labs.git
-BRANCH=main
+BRANCH=feat/add-infrastructure
 FOLDER=server
 
 mkdir -p $TARGET_DIR
