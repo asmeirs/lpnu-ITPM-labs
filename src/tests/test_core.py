@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 import sympy as sp
+from context import core
 from core import x, parse_function, get_domain_and_range, get_safe_numeric_domain
 
 
