@@ -21,18 +21,17 @@ func_str = st.sidebar.text_input("Enter a function f(x):", value="sin(x)")
 
 try:
     func_sym, f_lambdified, deriv_sym, deriv_lambdified = parse_function(func_str)
-except ValueError:
-    st.error("Invalid function expression. Please check your input.")
+except ValueError as e:
+    st.error(f"Invalid function expression: {e}")
     st.stop()
 
-try:
-    domain, range_y = get_domain_and_range(func_sym)
-    print(domain)
-    print(range_y)
+
+domain, range_y, domain_note = get_domain_and_range(func_sym)
+if domain_note:
+    st.markdown(f"_{domain_note}_")
+else:
     st.markdown(f"**Function domain:** {pretty(domain)}")
-    st.markdown(f"**Function range:** {pretty(range_y)}")
-except Exception:
-    st.warning("Could not compute domain/range.")
+st.markdown(f"**Function range:** {pretty(range_y)}")
 
 try:
     x_valid_min, x_valid_max = get_safe_numeric_domain(domain)

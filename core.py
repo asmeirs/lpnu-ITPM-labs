@@ -1,22 +1,66 @@
 import sympy as sp
+from sympy.parsing.sympy_parser import (
+    parse_expr,
+    standard_transformations,
+    implicit_multiplication_application,
+    convert_xor
+)
 import numpy as np
+import tokenize
+from io import BytesIO
 
 x = sp.symbols('x')
+ALLOWED_SYMBOLS = {'x': x, 'e': sp.E, 'pi': sp.pi}
+TRANSFORMATIONS = (
+        standard_transformations
+        + (implicit_multiplication_application, convert_xor)
+)
 
 def parse_function(func_str):
+    if not isinstance(func_str, str) or not func_str.strip():
+        raise ValueError("Function expression must be a non-empty string")
+
     try:
-        func_sym = sp.sympify(func_str)
-        f_lambdified = sp.lambdify(x, func_sym, modules=["numpy"])
-        deriv_sym = sp.diff(func_sym, x)
-        deriv_lambdified = sp.lambdify(x, deriv_sym, modules=["numpy"])
-        return func_sym, f_lambdified, deriv_sym, deriv_lambdified
-    except (sp.SympifyError, TypeError):
-        raise ValueError("Invalid function expression")
+        _ = list(tokenize.tokenize(BytesIO(func_str.encode('utf-8')).readline))
+
+        func_sym = parse_expr(
+            func_str,
+            local_dict=ALLOWED_SYMBOLS,
+            transformations=TRANSFORMATIONS,
+            evaluate=True
+        )
+    except (tokenize.TokenError, sp.SympifyError, SyntaxError, TypeError) as e:
+        raise ValueError(f"Invalid function expression: {e}")
+
+    extra = func_sym.free_symbols - {x}
+    if extra:
+        names = ', '.join(str(s) for s in extra)
+        raise ValueError(f"Unrecognized symbols in expression: {names}")
+
+    f_lambdified = sp.lambdify(x, func_sym, modules=["numpy"])
+    deriv_sym = sp.diff(func_sym, x)
+    deriv_lambdified = sp.lambdify(x, deriv_sym, modules=["numpy"])
+
+    return func_sym, f_lambdified, deriv_sym, deriv_lambdified
+
 
 def get_domain_and_range(func_sym):
-    domain = sp.calculus.util.continuous_domain(func_sym, x, sp.S.Reals)
+    note = None
+    try:
+        if func_sym.has(sp.tan) and func_sym.has(sp.cot):
+            domain = sp.solve_univariate_inequality(sp.cos(x) != 0 and sp.sin(x) != 0, x)
+        elif func_sym.has(sp.tan):
+            domain = sp.solve_univariate_inequality(sp.cos(x) != 0, x)
+        elif func_sym.has(sp.cot):
+            domain = sp.solve_univariate_inequality(sp.sin(x) != 0, x)
+        else:
+            domain = sp.calculus.util.continuous_domain(func_sym, x, sp.S.Reals)
+    except Exception:
+        domain = sp.S.Reals
+        note = (f"Domain cannot be fully defined.")
+
     range_y = sp.calculus.util.function_range(func_sym, x, domain)
-    return domain, range_y
+    return domain, range_y, note
 
 
 def get_safe_numeric_domain(domain, default_min=-20.0, default_max=20.0):
