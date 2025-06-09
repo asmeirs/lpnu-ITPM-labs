@@ -44,4 +44,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: asmeirs/calc-visualizer:${{ github.sha }}
+          tags: |
+            asmeirs/calc-visualizer:${{ github.sha }}
+            asmeirs/calc-visualizer:latest
