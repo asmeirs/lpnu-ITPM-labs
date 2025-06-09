@@ -25,3 +25,30 @@ data "aws_ami" "ubuntu" {
   }
   owners = ["099720109477"]
 }
+
+data "aws_iam_policy_document" "github_actions_ssm" {
+  statement {
+    actions = [
+      "ssm:StartSession",
+      "ssm:SendCommand"
+    ]
+    effect    = "Allow"
+    resources = [
+      module.ec2_instance.arn,
+      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:document/SSM-SessionManagerRunShell"
+    ]
+  }
+  statement {
+    actions   = ["ssmmessages:OpenDataChannel"]
+    effect    = "Allow"
+    resources = ["arn:aws:ssm:*:*:session/$${aws:userid}-*"]
+  }
+  statement {
+    actions   = [
+      "ssm:TerminateSession",
+      "ssm:ResumeSession"
+    ]
+    effect    = "Allow"
+    resources = ["arn:aws:ssm:*:*:session/$${aws:userid}-*"]
+  }
+}
