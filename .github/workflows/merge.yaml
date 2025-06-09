@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - 'feat/lab4-cicd-integration'
+      - 'main'
 
 jobs:
   test:
@@ -27,6 +27,7 @@ jobs:
           pytest src/tests/test_core.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
   build:
+    needs: [test]
     runs-on: ubuntu-latest
 
     steps:
