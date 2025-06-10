@@ -1,27 +1,53 @@
 # Interactive Calculus Visualizer
 
-## Prerequisites
-- Docker installed on your machine (https://www.docker.com/get-started)
+## Live Demo
 
-## Build the Docker Image
-From the root directory (where the `Dockerfile` is located), run:
+The app is deployed and accessible at: [http://calc-visualizer.duckdns.org/](http://calc-visualizer.duckdns.org/)
 
-```bash
-docker build -t calc-visualizer .
-````
+## Public Docker Image
 
-* `-t calc-visualizer` tags the image with a name.
-* `.` specifies the current directory as the build context.
+A pre-built Docker image is available on Docker Hub:
 
-## Run the Docker Container
-
-Run the container in detached mode and map port 8501:
-
-```bash
-docker run -d -p 8501:8501 calc-visualizer
+```
+docker pull asmeirs/calc-visualizer:latest
 ```
 
-* `-d` runs the container in the background.
-* `-p 8501:8501` maps port 8501 on the host to port 8501 in the container.
+You can browse the image on Docker Hub: [https://hub.docker.com/repository/docker/asmeirs/calc-visualizer](https://hub.docker.com/repository/docker/asmeirs/calc-visualizer)
 
-The app will be accessible at: [http://localhost:8501](http://localhost:8501)
+## Quick Start
+
+### 1. Run the App with Docker
+
+To run the application locally using the public Docker image:
+
+```bash
+# Pull the image
+docker pull asmeirs/calc-visualizer:latest
+
+# Run with Docker
+docker run -p 8501:8501 asmeirs/calc-visualizer:latest
+```
+
+Then open your browser and navigate to `http://localhost:8501`.
+
+### 2. Run the App Locally from Source
+
+If you prefer to run the code directly:
+
+```bash
+# Clone the repository
+git clone https://github.com/asmeirs/lpnu-ITPM-labs.git
+cd lpnu-ITPM-labs
+
+# (Optional) Create and activate a virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the app
+streamlit run src/app.py
+```
+
+Open your browser and go to `http://localhost:8501`.
