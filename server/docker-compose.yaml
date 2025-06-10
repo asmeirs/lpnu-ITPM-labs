@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  calc-visualizer:
+    image: asmeirs/calc-visualizer:latest
+    container_name: calc-visualizer
+    ports:
+      - "8501:8501"
+    networks:
+      - webnet
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - calc-visualizer
+    networks:
+      - webnet
+
+volumes:
+  certbot-etc:
+  certbot-var:
+
+networks:
+  webnet:
