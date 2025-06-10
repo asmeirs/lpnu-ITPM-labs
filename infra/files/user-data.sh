@@ -38,7 +38,7 @@ usermod -aG docker ubuntu
 
 TARGET_DIR=/home/ubuntu/calc-visualizer
 REPO_URL=https://github.com/asmeirs/lpnu-ITPM-labs.git
-BRANCH=feat/add-infrastructure
+BRANCH=main
 FOLDER=server
 
 mkdir -p $TARGET_DIR
@@ -53,5 +53,4 @@ chown -R ubuntu:ubuntu $TARGET_DIR
 chmod +x $TARGET_DIR/$FOLDER/docker-run.sh
 
 # Run docker-compose
-
 sudo -u ubuntu $TARGET_DIR/$FOLDER/docker-run.sh
