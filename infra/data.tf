@@ -35,8 +35,14 @@ data "aws_iam_policy_document" "github_actions_ssm" {
     effect    = "Allow"
     resources = [
       module.ec2_instance.arn,
-      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:document/SSM-SessionManagerRunShell"
+      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:document/SSM-SessionManagerRunShell",
+      "arn:aws:ssm:${var.region}::document/AWS-RunShellScript"
     ]
+  }
+  statement {
+    actions = ["ssm:ListCommandInvocations"]
+    effect    = "Allow"
+    resources = ["*"]
   }
   statement {
     actions   = ["ssmmessages:OpenDataChannel"]

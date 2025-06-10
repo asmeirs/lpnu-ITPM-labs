@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - 'feat/add-infrastructure'
+      - 'main'
 
 jobs:
   test:
